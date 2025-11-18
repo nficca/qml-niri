@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QJsonArray>
 #include "workspacemodel.h"
+#include "logging.h"
 
 WorkspaceModel::WorkspaceModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -141,7 +142,7 @@ void WorkspaceModel::handleWorkspaceActivated(quint64 id, bool focused)
 {
     int idx = findWorkspaceIndex(id);
     if (idx == -1) {
-        qWarning() << "Activated workspace not found:" << id;
+        qCWarning(niriLog) << "Activated workspace not found:" << id;
         return;
     }
 
@@ -180,7 +181,7 @@ void WorkspaceModel::handleWorkspaceUrgencyChanged(quint64 id, bool urgent)
 {
     int idx = findWorkspaceIndex(id);
     if (idx == -1) {
-        qWarning() << "Workspace not found for urgency change:" << id;
+        qCWarning(niriLog) << "Workspace not found for urgency change:" << id;
         return;
     }
 
@@ -198,7 +199,7 @@ void WorkspaceModel::handleWorkspaceActiveWindowChanged(quint64 workspaceId, con
 {
     int idx = findWorkspaceIndex(workspaceId);
     if (idx == -1) {
-        qWarning() << "Workspace not found for active window change:" << workspaceId;
+        qCWarning(niriLog) << "Workspace not found for active window change:" << workspaceId;
         return;
     }
 

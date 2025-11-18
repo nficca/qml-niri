@@ -10,6 +10,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml)
 add_library(niriplugin SHARED
     src/icon.cpp
     src/ipcclient.cpp
+    src/logging.cpp
     src/niri.cpp
     src/plugin.cpp
     src/windowmodel.cpp

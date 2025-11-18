@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QJsonArray>
 #include "icon.h"
+#include "logging.h"
 #include "windowmodel.h"
 
 WindowModel::WindowModel(QObject *parent)
@@ -151,7 +152,7 @@ void WindowModel::handleWindowClosed(quint64 id)
 {
     int idx = findWindowIndex(id);
     if (idx == -1) {
-        qWarning() << "Window not found for close:" << id;
+        qCWarning(niriLog) << "Window not found for close:" << id;
         return;
     }
 
@@ -188,7 +189,7 @@ void WindowModel::handleWindowUrgencyChanged(quint64 id, bool urgent)
 {
     int idx = findWindowIndex(id);
     if (idx == -1) {
-        qWarning() << "Window not found for urgency change:" << id;
+        qCWarning(niriLog) << "Window not found for urgency change:" << id;
         return;
     }
 

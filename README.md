@@ -94,6 +94,17 @@ Item {
 > See the [niri IPC documentation](https://github.com/YaLTeR/niri/wiki/IPC) for details.
 
 
+### Logging
+
+The plugin will output informational and error messages by default. To enable verbose
+logging for troubleshooting, set the `QT_LOGGING_RULES` environment variable. E.g.:
+```shell
+export QT_LOGGING_RULES="niri.debug=true"
+```
+
+This will also show debug and warning messages for icon lookup, IPC communication, and event handling.
+
+
 ### Working with workspaces
 
 Access workspace information via the `workspaces` model:

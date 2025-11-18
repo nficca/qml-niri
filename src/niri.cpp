@@ -1,6 +1,7 @@
-#include "niri.h"
 #include <QDebug>
 #include <QJsonObject>
+#include "niri.h"
+#include "logging.h"
 
 Niri::Niri(QObject *parent)
     : QObject(parent)
@@ -114,7 +115,7 @@ void Niri::closeWindowOrFocused(quint64 id)
 void Niri::sendAction(const QJsonObject &action)
 {
     if (!isConnected()) {
-        qWarning() << "Cannot send action: not connected to niri";
+        qCWarning(niriLog) << "Cannot send action: not connected to niri";
         return;
     }
 

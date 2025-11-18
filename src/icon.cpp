@@ -1,4 +1,3 @@
-#include "icon.h"
 #include <QFile>
 #include <QDir>
 #include <QDebug>
@@ -6,6 +5,8 @@
 #include <QProcessEnvironment>
 #include <QStandardPaths>
 #include <QTextStream>
+#include "icon.h"
+#include "logging.h"
 
 namespace IconLookup {
 
@@ -22,39 +23,39 @@ QString lookup(const QString &appId)
 
     QString desktopFile = Internal::findDesktopFile(appId);
     if (desktopFile.isEmpty()) {
-        qDebug() << "No desktop file found for app ID:" << appId;
+        qCDebug(niriLog) << "No desktop file found for app ID:" << appId;
         // Try fallback: direct icon theme lookup using the appId
-        qDebug() << "Attempting fallback icon lookup for:" << appId;
+        qCDebug(niriLog) << "Attempting fallback icon lookup for:" << appId;
         result = Internal::findIconInTheme(appId);
         if (!result.isEmpty()) {
-            qDebug() << "Found fallback icon for" << appId << ":" << result;
+            qCDebug(niriLog) << "Found fallback icon for" << appId << ":" << result;
         } else {
-            qDebug() << "No fallback icon found for" << appId;
+            qCDebug(niriLog) << "No fallback icon found for" << appId;
         }
         s_cache[appId] = result;
         return result;
     }
 
-    qDebug() << "Found desktop file for" << appId << ":" << desktopFile;
+    qCDebug(niriLog) << "Found desktop file for" << appId << ":" << desktopFile;
 
     // Parse the Icon= field from desktop file
     QString iconValue = Internal::parseIconFromDesktopFile(desktopFile);
     if (iconValue.isEmpty()) {
-        qDebug() << "No Icon field found in desktop file:" << desktopFile;
+        qCDebug(niriLog) << "No Icon field found in desktop file:" << desktopFile;
         s_cache[appId] = result;
         return result;
     }
 
-    qDebug() << "Icon value from desktop file:" << iconValue;
+    qCDebug(niriLog) << "Icon value from desktop file:" << iconValue;
 
     QFileInfo desktopFileInfo(desktopFile);
     QString desktopDir = desktopFileInfo.absolutePath();
     result = Internal::resolveIconPath(iconValue, desktopDir);
 
     if (!result.isEmpty()) {
-        qDebug() << "Resolved icon path for" << appId << ":" << result;
+        qCDebug(niriLog) << "Resolved icon path for" << appId << ":" << result;
     } else {
-        qDebug() << "Could not resolve icon path for" << appId;
+        qCDebug(niriLog) << "Could not resolve icon path for" << appId;
     }
 
     s_cache[appId] = result;
@@ -142,7 +143,7 @@ QString parseIconFromDesktopFile(const QString &desktopFilePath)
 {
     QFile file(desktopFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Failed to open desktop file:" << desktopFilePath;
+        qCWarning(niriLog) << "Failed to open desktop file:" << desktopFilePath;
         return QString();
     }
 
