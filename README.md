@@ -48,15 +48,15 @@ Add this flake to your `inputs` in `flake.nix`:
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-	quickshell = {
-	  url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
-	  inputs.nixpkgs.follows = "nixpkgs";
-	};
-
-	qml-niri = {
-      url = "github:juuyokka/qml-niri/feat-nix-flake";
+    quickshell = {
+      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
-	  inputs.quickshell.follows = "quickshell";
+    };
+
+    qml-niri = {
+      url = "github:imiric/qml-niri/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.quickshell.follows = "quickshell";
     };
   };
 
