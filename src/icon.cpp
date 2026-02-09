@@ -72,17 +72,55 @@ namespace Internal {
 QStringList getXdgDataDirs()
 {
     QStringList dirs;
-
-    QString homeLocal = QDir::homePath() + "/.local/share";
-    dirs.append(homeLocal);
-
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    QString xdgDataDirs = env.value("XDG_DATA_DIRS", "/usr/local/share:/usr/share");
 
+    QString xdgDataHome = env.value("XDG_DATA_HOME");
+    if (xdgDataHome.isEmpty()) {
+        xdgDataHome = QDir::homePath() + "/.local/share";
+    }
+    dirs.append(xdgDataHome);
+
+    QString xdgDataDirs = env.value("XDG_DATA_DIRS", "/usr/local/share:/usr/share");
     dirs.append(xdgDataDirs.split(':', Qt::SkipEmptyParts));
+
     dirs.removeDuplicates();
 
     return dirs;
+}
+
+QStringList getXdgIconDirs()
+{
+    QStringList iconDirs;
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+
+    QString legacyIcons = QDir::homePath() + "/.icons";
+    if (QDir(legacyIcons).exists()) {
+        iconDirs.append(legacyIcons);
+    }
+
+    QString xdgDataHome = env.value("XDG_DATA_HOME");
+    if (xdgDataHome.isEmpty()) {
+        xdgDataHome = QDir::homePath() + "/.local/share";
+    }
+    QString userIcons = xdgDataHome + "/icons";
+    if (QDir(userIcons).exists()) {
+        iconDirs.append(userIcons);
+    }
+
+    QString xdgDataDirs = env.value("XDG_DATA_DIRS", "/usr/local/share:/usr/share");
+    for (const QString &dir : xdgDataDirs.split(':', Qt::SkipEmptyParts)) {
+        QString iconDir = dir + "/icons";
+        if (QDir(iconDir).exists() && !iconDirs.contains(iconDir)) {
+            iconDirs.append(iconDir);
+        }
+    }
+
+    QString pixmaps = "/usr/share/pixmaps";
+    if (QDir(pixmaps).exists()) {
+        iconDirs.append(pixmaps);
+    }
+
+    return iconDirs;
 }
 
 QString findDesktopFile(const QString &appId)
@@ -219,23 +257,7 @@ QString resolveIconPath(const QString &iconValue, const QString &desktopFileDir)
 
 QString findIconInTheme(const QString &iconName)
 {
-    QStringList iconDirs;
-
-    // User icon directories
-    QString homeIcons = QDir::homePath() + "/.local/share/icons";
-    if (QDir(homeIcons).exists()) {
-        iconDirs.append(homeIcons);
-    }
-
-    QString homeIconsLegacy = QDir::homePath() + "/.icons";
-    if (QDir(homeIconsLegacy).exists()) {
-        iconDirs.append(homeIconsLegacy);
-    }
-
-    // System icon directories
-    iconDirs.append("/usr/share/icons");
-    iconDirs.append("/usr/local/share/icons");
-    iconDirs.append("/usr/share/pixmaps");
+    QStringList iconDirs = getXdgIconDirs();
 
     QStringList themes;
 
